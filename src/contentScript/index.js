@@ -1,19 +1,43 @@
-// If your extension doesn't need a content script, just leave this file empty
+// printAllPageLinks();
 
-// This is an example of a script that will run on every page. This can alter pages
-// Don't forget to change `matches` in manifest.json if you want to only change specific webpages
-printAllPageLinks();
+if (document.readyState == "complete") {
+  printAllPageLinks();
+} else {
+  document.onreadystatechange = function () {
+    if (document.readyState == "complete") {
+      printAllPageLinks();
+    }
+  };
+}
 
-// This needs to be an export due to typescript implementation limitation of needing '--isolatedModules' tsconfig
 export function printAllPageLinks() {
-  const allLinks = Array.from(document.querySelectorAll('a')).map(
-    link => link.href
-  );
+  const currentUrl = document.URL;
 
-  console.log('-'.repeat(30));
-  console.log(
-    `These are all ${allLinks.length} links on the current page that have been printed by the Sample Create React Extension`
-  );
-  console.log(allLinks);
-  console.log('-'.repeat(30));
+  // play the first song in the songs tray, from search results
+  const spotifyPlaySongAction = () => {
+    const identifier = 'data-testid="tracklist-row"';
+    // get the buttom from the this searchResult
+    console.log("spotify is an ass");
+    document
+      .querySelectorAll(`[${identifier}]`)[0]
+      .querySelector("button")
+      .click();
+  };
+
+  // play the first result in the videos tray, from search results
+  const youtubePlayVideoAction = () => {
+    const identifier = "ytd-video-renderer";
+    document.querySelectorAll(`${identifier}`)[0].querySelector("a").click();
+  };
+
+  console.log("The document has been loaded now");
+
+  if (currentUrl.indexOf("youtube.com/results?search_query") >= 0) {
+    // if (currentUrl.indexOf("search/") > 0) {
+    youtubePlayVideoAction();
+  } else if (currentUrl.indexOf("search/") > 0) {
+    spotifyPlaySongAction();
+  } else {
+    console.log("will do nothing here");
+  }
 }
